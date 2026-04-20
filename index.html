@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HITOMIRU ヒアリングシート</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Noto+Sans+JP:wght@300;400;500&family=Bebas+Neue&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root{
+  --orange:#FF5800;--black:#111;--white:#FAFAFA;--gray:#F0EDEA;
+  --mid:#888;--border:#D8D3CE;--r:2px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--gray);color:var(--black);font-size:13px;}
+
+/* ===== HEADER ===== */
+.header{background:var(--black);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:.15em;color:var(--white);}
+.logo span{color:var(--orange);}
+.logo-sub{font-family:'Cormorant Garamond',serif;font-size:10px;letter-spacing:.2em;color:var(--mid);}
+
+.wrap{max-width:640px;margin:0 auto;padding:20px 12px 80px;}
+
+/* ===== TABS ===== */
+.tabs{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:20px;}
+.tab{
+  font-size:11px;font-weight:500;letter-spacing:.04em;padding:9px 2px;
+  border:1.5px solid var(--border);background:var(--white);color:var(--mid);
+  cursor:pointer;border-radius:var(--r);text-align:center;
+  transition: background 0.22s var(--ease),
+              border-color 0.22s var(--ease),
+              color 0.22s var(--ease),
+              transform 0.12s var(--ease),
+              box-shadow 0.22s var(--ease);
+  font-family:'Noto Sans JP',sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab:hover{border-color:var(--orange);color:var(--orange);}
+.tab:active{transform:scale(0.95);}
+.tab.active{background:var(--orange);border-color:var(--orange);color:#fff;box-shadow:0 2px 8px rgba(255,88,0,.3);}
+
+/* タブコンテンツのフェード */
+.tab-section{animation: fadeSlideIn 0.28s var(--ease) both;}
+@keyframes fadeSlideIn{
+  from{opacity:0;transform:translateY(6px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ===== THEME A: 黒ベース × オレンジ（バナー・名刺・チラシ） ===== */
+body.theme-a{
+  --bg: #F0EDEA;
+  background: var(--bg);
+}
+body.theme-a .wrap{ background: transparent; }
+body.theme-a .card{ background:#fff; border-color:#D8D3CE; }
+body.theme-a .ch{ background:var(--black); }
+body.theme-a .ch-num{ color:var(--orange); }
+body.theme-a .ch-title{ color:#fff; }
+body.theme-a .tab.active{ background:var(--orange); border-color:var(--orange); color:#fff; }
+
+/* ===== THEME B: オレンジベース × 黒（LP・サイト） ===== */
+/* 背景・ヘッダー・タブ */
+body.theme-b{
+  background: #111;
+  transition: background 0.35s var(--ease);
+}
+body.theme-b .header{ background:#000; border-bottom:1px solid #2a2a2a; }
+body.theme-b .logo-sub{ color:#555; }
+
+body.theme-b .tabs .tab{
+  background:#222;
+  border-color:#333;
+  color:#777;
+}
+body.theme-b .tabs .tab:hover{ border-color:var(--orange); color:var(--orange); }
+body.theme-b .tabs .tab.active{
+  background:var(--orange);
+  border-color:var(--orange);
+  color:#fff;
+  box-shadow: 0 2px 12px rgba(255,88,0,.45);
+}
+
+/* カード外枠 */
+body.theme-b .card{
+  background:#fff;
+  border-color:#e0dbd5;
+}
+body.theme-b .card:hover{ box-shadow: 0 2px 16px rgba(255,88,0,.1); }
+
+/* カード見出し（ch）はオレンジ × 黒文字 */
+body.theme-b .ch{ background:var(--orange); }
+body.theme-b .ch:hover{ background:#e04d00; }
+body.theme-b .ch:active{ background:#c94400; }
+body.theme-b .ch-num{ color:rgba(0,0,0,.45); }
+body.theme-b .ch-title{ color:#fff; font-weight:700; letter-spacing:.06em; }
+body.theme-b .ch-arr{ color:rgba(255,255,255,.6); }
+
+/* カード本文は白背景・黒テキストのまま */
+body.theme-b .cb{ background:#fff; }
+body.theme-b label.lbl{ color:#999; }
+body.theme-b input[type=text],
+body.theme-b input[type=date],
+body.theme-b select,
+body.theme-b textarea{
+  background:#fff;
+  border-color:#d8d3ce;
+  color:#111;
+}
+body.theme-b input[type=text]::placeholder,
+body.theme-b textarea::placeholder{ color:#bbb; }
+body.theme-b input:focus,
+body.theme-b select:focus,
+body.theme-b textarea:focus{
+  border-color:var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,88,0,.12);
+}
+
+/* 選択肢 */
+body.theme-b .opt{
+  background:#fafafa;
+  border-color:#d8d3ce;
+  color:#555;
+}
+body.theme-b .opt:hover{ border-color:var(--orange); color:var(--orange); background:#fff8f5; }
+body.theme-b .opt.on{
+  background:var(--orange);
+  border-color:var(--orange);
+  color:#fff;
+}
+
+/* 画像エリア */
+body.theme-b .img-zone{ border-color:#d8d3ce; background:#fafafa; }
+body.theme-b .img-zone:hover{ border-color:var(--orange); background:#fff8f5; }
+body.theme-b .img-zone-txt{ color:#aaa; }
+body.theme-b .img-zone-txt strong{ color:#555; }
+body.theme-b .img-count{ color:#aaa; }
+
+/* ボタン */
+body.theme-b .btn-outline{ background:transparent; border-color:#555; color:#888; }
+body.theme-b .btn-outline:hover:not(:disabled){ border-color:#111; color:#111; }
+body.theme-b .btn-dark{ background:#111; color:#fff; }
+body.theme-b .btn-dark:hover:not(:disabled){ background:#333; }
+
+/* モーダル */
+body.theme-b .modal{ background:#fff; color:#111; }
+body.theme-b .modal h3{ color:#111; }
+body.theme-b .modal p{ color:#888; }
+
+/* config notice */
+body.theme-b .config-notice{ background:#fff8f5; border-color:var(--orange); color:#555; }
+body.theme-b .config-notice code{ background:#f0edea; color:#111; }
+
+/* テーマ切り替えトランジション */
+body, .card, .ch, .opt, input, select, textarea, .tab, .modal{
+  transition-property: background, border-color, color, box-shadow;
+  transition-duration: 0.3s;
+  transition-timing-function: var(--ease);
+}
+
+/* ===== CARD ===== */
+.card{
+  background:var(--white);border:1px solid var(--border);border-radius:var(--r);
+  margin-bottom:10px;overflow:hidden;
+  transition: box-shadow 0.2s var(--ease);
+}
+.card:hover{ box-shadow: 0 2px 12px rgba(0,0,0,.07); }
+
+.ch{
+  display:flex;align-items:center;gap:10px;padding:11px 14px;
+  background:var(--black);cursor:pointer;user-select:none;
+  transition: background 0.18s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.ch:hover{ background:#222; }
+.ch:active{ background:#333; }
+.ch-num{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:.12em;color:var(--orange);min-width:24px;}
+.ch-title{font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--white);flex:1;}
+.ch-arr{
+  font-size:13px;color:var(--mid);
+  transition:transform 0.28s var(--ease);
+}
+.card.collapsed .ch-arr{transform:rotate(-90deg);}
+
+/* アコーディオン本体 */
+.cb-wrap{
+  display:grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.32s var(--ease),
+              opacity 0.28s var(--ease);
+  opacity:1;
+}
+.card.collapsed .cb-wrap{
+  grid-template-rows: 0fr;
+  opacity:0;
+}
+.cb-inner{overflow:hidden;}
+.cb{padding:14px;}
+
+/* ===== FIELDS ===== */
+.fg{display:flex;flex-direction:column;gap:11px;}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.full{grid-column:1/-1;}
+label.lbl{font-size:10px;font-weight:500;letter-spacing:.1em;color:var(--mid);text-transform:uppercase;}
+.req{color:var(--orange);margin-left:2px;}
+
+input[type=text],input[type=date],select,textarea{
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;
+  padding:9px 10px;border:1.5px solid var(--border);border-radius:var(--r);
+  background:#fff;color:var(--black);outline:none;width:100%;
+  transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--orange);
+  box-shadow: 0 0 0 3px rgba(255,88,0,.1);
+}
+textarea{resize:vertical;min-height:68px;line-height:1.7;}
+
+/* ===== OPTIONS ===== */
+.opts{display:flex;flex-wrap:wrap;gap:5px;}
+.opt{
+  display:inline-flex;align-items:center;font-size:11px;
+  padding:6px 11px;border:1.5px solid var(--border);border-radius:var(--r);
+  cursor:pointer;background:#fff;user-select:none;
+  transition: background 0.18s var(--ease),
+              border-color 0.18s var(--ease),
+              color 0.18s var(--ease),
+              transform 0.1s var(--ease),
+              box-shadow 0.18s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.opt:hover{border-color:var(--orange);}
+.opt:active{transform:scale(0.94);}
+.opt.on{
+  background:var(--orange);border-color:var(--orange);color:#fff;
+  box-shadow:0 1px 6px rgba(255,88,0,.25);
+}
+
+/* ===== IMAGE UPLOAD ===== */
+.img-zone{
+  border:1.5px dashed var(--border);border-radius:var(--r);
+  padding:14px;text-align:center;cursor:pointer;position:relative;
+  transition: border-color 0.18s var(--ease), background 0.18s var(--ease);
+}
+.img-zone:hover{border-color:var(--orange);background:#fff8f5;}
+.img-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-zone-txt strong{display:block;font-size:13px;margin-bottom:3px;}
+.img-zone-txt{font-size:11px;color:var(--mid);}
+.img-preview{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+.img-thumb{
+  position:relative;width:68px;height:68px;border-radius:var(--r);
+  overflow:hidden;border:1px solid var(--border);
+  animation: thumbIn 0.22s var(--ease) both;
+}
+@keyframes thumbIn{
+  from{opacity:0;transform:scale(0.8);}
+  to{opacity:1;transform:scale(1);}
+}
+.img-thumb img{width:100%;height:100%;object-fit:cover;}
+.img-del{
+  position:absolute;top:2px;right:2px;background:rgba(0,0,0,.65);color:#fff;
+  border:none;border-radius:50%;width:17px;height:17px;font-size:9px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition: background 0.15s var(--ease), transform 0.12s var(--ease);
+}
+.img-del:hover{background:rgba(0,0,0,.9);transform:scale(1.15);}
+.img-count{font-size:10px;color:var(--mid);margin-top:4px;}
+
+/* ===== BUTTONS ===== */
+.actions{display:flex;flex-direction:column;gap:8px;margin-top:24px;}
+.btn{
+  font-family:'Noto Sans JP',sans-serif;font-size:13px;font-weight:500;
+  letter-spacing:.05em;padding:13px 16px;border:none;cursor:pointer;
+  border-radius:var(--r);width:100%;text-align:center;
+  transition: background 0.2s var(--ease),
+              border-color 0.2s var(--ease),
+              color 0.2s var(--ease),
+              transform 0.12s var(--ease),
+              box-shadow 0.2s var(--ease),
+              opacity 0.2s var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active:not(:disabled){transform:scale(0.97);}
+.btn:disabled{opacity:.45;cursor:not-allowed;}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--mid);}
+.btn-outline:hover:not(:disabled){border-color:var(--black);color:var(--black);}
+.btn-dark{background:var(--black);color:#fff;}
+.btn-dark:hover:not(:disabled){background:#2a2a2a;box-shadow:0 2px 10px rgba(0,0,0,.2);}
+.btn-orange{background:var(--orange);color:#fff;}
+.btn-orange:hover:not(:disabled){background:#e04d00;box-shadow:0 2px 10px rgba(255,88,0,.35);}
+@media(min-width:460px){
+  .actions{flex-direction:row;}
+  .btn{width:auto;flex:1;}
+}
+
+/* ===== MODAL ===== */
+.modal-bg{
+  display:flex;position:fixed;inset:0;
+  background:rgba(0,0,0,0);
+  z-index:100;align-items:flex-end;justify-content:center;
+  pointer-events:none;
+  transition: background 0.28s var(--ease);
+}
+.modal-bg.open{
+  background:rgba(0,0,0,.5);
+  pointer-events:all;
+}
+@media(min-width:520px){
+  .modal-bg{align-items:center;padding:16px;}
+}
+
+.modal{
+  background:#fff;padding:24px 20px;width:100%;max-width:500px;
+  border-radius:var(--r) var(--r) 0 0;
+  transform:translateY(100%);
+  transition: transform 0.32s var(--ease), opacity 0.28s var(--ease);
+  opacity:0;
+}
+@media(min-width:520px){
+  .modal{
+    border-radius:var(--r);max-width:440px;
+    transform:translateY(16px) scale(0.97);
+  }
+}
+.modal-bg.open .modal{
+  transform:translateY(0) scale(1);
+  opacity:1;
+}
+.modal h3{font-size:15px;font-weight:500;margin-bottom:10px;}
+.modal p{font-size:12px;color:var(--mid);margin-bottom:14px;line-height:1.7;}
+.modal .field{margin-bottom:14px;}
+.modal-actions{display:flex;gap:8px;}
+.modal-actions .btn{width:auto;flex:1;}
+
+/* ===== SENDING OVERLAY ===== */
+.sending-overlay{
+  display:flex;position:fixed;inset:0;
+  background:rgba(0,0,0,0);
+  z-index:200;align-items:center;justify-content:center;
+  pointer-events:none;
+  transition: background 0.22s var(--ease);
+}
+.sending-overlay.show{
+  background:rgba(0,0,0,.4);
+  pointer-events:all;
+}
+.sending-box{
+  background:#fff;padding:28px 40px;border-radius:var(--r);text-align:center;
+  transform:scale(0.88);opacity:0;
+  transition: transform 0.28s var(--ease), opacity 0.22s var(--ease);
+}
+.sending-overlay.show .sending-box{transform:scale(1);opacity:1;}
+.sending-box p{font-size:13px;margin-top:10px;color:var(--mid);}
+.spinner{
+  width:32px;height:32px;border:3px solid var(--border);
+  border-top-color:var(--orange);border-radius:50%;
+  animation:spin .65s linear infinite;margin:0 auto;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ===== CONFIG NOTICE ===== */
+.config-notice{
+  background:#fff8f5;border:1.5px solid var(--orange);border-radius:var(--r);
+  padding:12px 14px;margin-bottom:20px;font-size:12px;line-height:1.7;
+}
+.config-notice strong{color:var(--orange);}
+.config-notice code{background:#f0edea;padding:1px 5px;border-radius:2px;font-size:11px;font-family:monospace;}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;bottom:24px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  background:var(--black);color:#fff;font-size:12px;padding:10px 20px;
+  border-radius:40px;opacity:0;
+  transition: opacity 0.24s var(--ease), transform 0.24s var(--ease);
+  pointer-events:none;white-space:nowrap;z-index:300;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast.error{background:#c0392b;}
+.toast.success{background:#27ae60;}
+
+@media print{
+  body{background:#fff;}
+  .header{background:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .tabs,.actions,.img-zone,.modal-bg,.toast,.config-notice,.sending-overlay{display:none!important;}
+  .card.collapsed .cb-wrap{grid-template-rows:1fr!important;opacity:1!important;}
+  .ch-arr{display:none;}
+  .ch{background:#000!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .opt.on{background:var(--orange)!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .wrap{padding:8px;}
+  .card{break-inside:avoid;margin-bottom:6px;box-shadow:none!important;}
+}
+</style>
+</head>
+<body class="theme-a">
+
+<div class="header">
+  <div class="logo">HITOMIRU<span>.</span></div>
+  <div class="logo-sub">CLIENT HEARING SHEET</div>
+</div>
+
+<div class="wrap">
+
+<div class="config-notice" id="configNotice">
+  <strong>EmailJS 設定が必要です</strong><br>
+  ファイル先頭の以下3箇所を差し替えてください：<br>
+  <code>YOUR_PUBLIC_KEY</code> → Public Key／
+  <code>YOUR_SERVICE_ID</code> → Service ID／
+  <code>YOUR_TEMPLATE_ID</code> → Template ID
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('banner',this)">バナー</button>
+  <button class="tab" onclick="switchTab('lp',this)">LP</button>
+  <button class="tab" onclick="switchTab('meishi',this)">名刺</button>
+  <button class="tab" onclick="switchTab('site',this)">サイト</button>
+  <button class="tab" onclick="switchTab('chirashi',this)">チラシ</button>
+</div>
+
+<!-- 01 基本情報 -->
+<div class="card" id="c-basic">
+  <div class="ch" onclick="tog('c-basic')"><span class="ch-num">01</span><span class="ch-title">基本情報</span><span class="ch-arr">▾</span></div>
+  <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg2">
+    <div class="field full"><label class="lbl">クライアント名 <span class="req">*</span></label><input type="text" id="f-client" placeholder="株式会社〇〇 / 個人名"></div>
+    <div class="field"><label class="lbl">担当者名</label><input type="text" id="f-person" placeholder="山田 太郎"></div>
+    <div class="field"><label class="lbl">連絡先</label><input type="text" id="f-contact" placeholder="@user / mail@example.com"></div>
+    <div class="field"><label class="lbl">ヒアリング日</label><input type="date" id="f-date"></div>
+    <div class="field"><label class="lbl">納期 <span class="req">*</span></label><input type="date" id="f-deadline"></div>
+    <div class="field"><label class="lbl">修正回数</label>
+      <select id="f-revision"><option value="">選択</option><option>1回</option><option>2回</option><option>3回</option><option>無制限</option><option>要相談</option></select>
+    </div>
+    <div class="field"><label class="lbl">予算感</label><input type="text" id="f-budget" placeholder="¥30,000〜 / 要相談"></div>
+    <div class="field"><label class="lbl">支払い方法</label>
+      <select id="f-payment"><option value="">選択</option><option>銀行振込（前払い）</option><option>銀行振込（後払い）</option><option>分割払い</option><option>PayPay / メルペイ</option><option>その他</option></select>
+    </div>
+    <div class="field full"><label class="lbl">契約書 / 見積書</label>
+      <div class="opts"><span class="opt" onclick="tog2(this)">送付済み</span><span class="opt" onclick="tog2(this)">未送付</span><span class="opt" onclick="tog2(this)">不要</span></div>
+    </div>
+  </div></div></div></div>
+</div>
+
+<!-- 02 ブランド -->
+<div class="card" id="c-brand">
+  <div class="ch" onclick="tog('c-brand')"><span class="ch-num">02</span><span class="ch-title">ブランド・事業情報</span><span class="ch-arr">▾</span></div>
+  <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg2">
+    <div class="field"><label class="lbl">ブランド名 / 店舗名</label><input type="text" id="f-brand" placeholder="BRAND NAME"></div>
+    <div class="field"><label class="lbl">業種 / ジャンル</label><input type="text" id="f-industry" placeholder="美容サロン / 飲食 etc."></div>
+    <div class="field full"><label class="lbl">ターゲット層</label><input type="text" id="f-target" placeholder="20〜30代女性・美容関心層・インスタユーザー"></div>
+    <div class="field full"><label class="lbl">雰囲気・世界観</label><textarea id="f-mood" placeholder="高級感・シンプル・大人かわいい・ナチュラル etc."></textarea></div>
+    <div class="field"><label class="lbl">ブランドカラー</label><input type="text" id="f-color" placeholder="ベージュ・ゴールド / #F0E6D3"></div>
+    <div class="field"><label class="lbl">参考URL / SNS</label><input type="text" id="f-ref" placeholder="https://..."></div>
+  </div></div></div></div>
+</div>
+
+<!-- 03 デザイン -->
+<div class="card" id="c-design">
+  <div class="ch" onclick="tog('c-design')"><span class="ch-num">03</span><span class="ch-title">デザイン方向性</span><span class="ch-arr">▾</span></div>
+  <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+    <div class="field"><label class="lbl">イメージキーワード（複数選択可）</label>
+      <div class="opts">
+        <span class="opt" onclick="tog2(this)">シンプル</span><span class="opt" onclick="tog2(this)">高級感</span>
+        <span class="opt" onclick="tog2(this)">かわいい</span><span class="opt" onclick="tog2(this)">ポップ</span>
+        <span class="opt" onclick="tog2(this)">ナチュラル</span><span class="opt" onclick="tog2(this)">スタイリッシュ</span>
+        <span class="opt" onclick="tog2(this)">エレガント</span><span class="opt" onclick="tog2(this)">力強い</span>
+        <span class="opt" onclick="tog2(this)">クール</span><span class="opt" onclick="tog2(this)">温かみ</span>
+        <span class="opt" onclick="tog2(this)">プロフェッショナル</span><span class="opt" onclick="tog2(this)">親しみやすい</span>
+      </div>
+    </div>
+    <div class="field"><label class="lbl">参考デザイン</label><textarea id="f-refdesign" placeholder="URL / SNSアカウント / キーワード。複数あれば全部！"></textarea></div>
+    <div class="field"><label class="lbl">NGな雰囲気・テイスト</label><textarea id="f-ng" placeholder="チープに見えるもの・派手すぎるもの etc."></textarea></div>
+  </div></div></div></div>
+</div>
+
+<!-- 04 素材 -->
+<div class="card" id="c-assets">
+  <div class="ch" onclick="tog('c-assets')"><span class="ch-num">04</span><span class="ch-title">素材・支給品</span><span class="ch-arr">▾</span></div>
+  <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+    <div class="field"><label class="lbl">ロゴ支給</label>
+      <div class="opts"><span class="opt" onclick="tog2(this)">あり（AI/PNG）</span><span class="opt" onclick="tog2(this)">なし（制作依頼含む）</span><span class="opt" onclick="tog2(this)">なし（ロゴなしOK）</span></div>
+    </div>
+    <div class="field"><label class="lbl">写真・画像素材</label>
+      <div class="opts"><span class="opt" onclick="tog2(this)">支給あり</span><span class="opt" onclick="tog2(this)">フリー素材でOK</span><span class="opt" onclick="tog2(this)">撮影依頼あり</span><span class="opt" onclick="tog2(this)">なし</span></div>
+    </div>
+    <div class="field"><label class="lbl">テキスト・コピー</label>
+      <div class="opts"><span class="opt" onclick="tog2(this)">支給あり（完成形）</span><span class="opt" onclick="tog2(this)">素案あり（要調整）</span><span class="opt" onclick="tog2(this)">ライティングも依頼</span></div>
+    </div>
+    <div class="field"><label class="lbl">その他支給予定の素材</label><textarea id="f-othermaterial" placeholder="ブランドガイドライン / カラーコード / フォント指定 etc."></textarea></div>
+  </div></div></div></div>
+</div>
+
+<!-- タブ別セクション -->
+<div id="s-banner" class="tab-section">
+  <div class="card" id="c-banner">
+    <div class="ch" onclick="tog('c-banner')"><span class="ch-num">05</span><span class="ch-title">バナー 詳細</span><span class="ch-arr">▾</span></div>
+    <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+      <div class="field"><label class="lbl">使用媒体（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">Instagram</span><span class="opt" onclick="tog2(this)">LINE</span><span class="opt" onclick="tog2(this)">Web広告</span><span class="opt" onclick="tog2(this)">Web掲載</span><span class="opt" onclick="tog2(this)">印刷</span><span class="opt" onclick="tog2(this)">その他</span></div>
+      </div>
+      <div class="field"><label class="lbl">サイズ / 枚数</label><input type="text" id="f-bsize" placeholder="1080×1080px × 3枚、1200×628px × 1枚"></div>
+      <div class="field"><label class="lbl">納品形式（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">PNG</span><span class="opt" onclick="tog2(this)">JPG</span><span class="opt" onclick="tog2(this)">GIF</span><span class="opt" onclick="tog2(this)">Figmaデータ</span><span class="opt" onclick="tog2(this)">AI</span></div>
+      </div>
+      <div class="field"><label class="lbl">アニメーション</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">静止画のみ</span><span class="opt" onclick="tog2(this)">GIFアニメ希望</span><span class="opt" onclick="tog2(this)">どちらでもOK</span></div>
+      </div>
+      <div class="field"><label class="lbl">訴求ポイント / メインメッセージ</label><textarea id="f-bappeal" placeholder="初回限定50%OFF / 夏の新作キャンペーン etc."></textarea></div>
+      <div class="field"><label class="lbl">掲載テキスト（確定分）</label><textarea id="f-btext" placeholder="キャッチコピー・価格・URL・電話番号など確定テキストをすべて"></textarea></div>
+    </div></div></div></div>
+  </div>
+</div>
+
+<div id="s-lp" class="tab-section" style="display:none">
+  <div class="card" id="c-lp">
+    <div class="ch" onclick="tog('c-lp')"><span class="ch-num">05</span><span class="ch-title">LP 詳細</span><span class="ch-arr">▾</span></div>
+    <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+      <div class="field"><label class="lbl">LPの目的（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">予約・申込み</span><span class="opt" onclick="tog2(this)">購入</span><span class="opt" onclick="tog2(this)">LINE登録</span><span class="opt" onclick="tog2(this)">問い合わせ</span><span class="opt" onclick="tog2(this)">資料請求</span><span class="opt" onclick="tog2(this)">その他</span></div>
+      </div>
+      <div class="field"><label class="lbl">流入元（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">Meta広告</span><span class="opt" onclick="tog2(this)">Instagram</span><span class="opt" onclick="tog2(this)">Google広告</span><span class="opt" onclick="tog2(this)">LINE</span><span class="opt" onclick="tog2(this)">有機流入</span></div>
+      </div>
+      <div class="field"><label class="lbl">必要なセクション（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">FV</span><span class="opt" onclick="tog2(this)">サービス説明</span><span class="opt" onclick="tog2(this)">お客様の声</span><span class="opt" onclick="tog2(this)">料金表</span><span class="opt" onclick="tog2(this)">よくある質問</span><span class="opt" onclick="tog2(this)">アクセス</span><span class="opt" onclick="tog2(this)">プロフィール</span><span class="opt" onclick="tog2(this)">ビフォーアフター</span><span class="opt" onclick="tog2(this)">CTA</span></div>
+      </div>
+      <div class="field"><label class="lbl">制作方法</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">HTML/CSS</span><span class="opt" onclick="tog2(this)">WordPress</span><span class="opt" onclick="tog2(this)">Studio</span><span class="opt" onclick="tog2(this)">STORES</span><span class="opt" onclick="tog2(this)">要相談</span></div>
+      </div>
+      <div class="field"><label class="lbl">フォーム設置</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">必要</span><span class="opt" onclick="tog2(this)">不要</span><span class="opt" onclick="tog2(this)">外部ツール使用</span></div>
+      </div>
+      <div class="field"><label class="lbl">訴求ポイント</label><textarea id="f-lpappeal" placeholder="何をいちばん伝えたい？強みは？"></textarea></div>
+      <div class="field"><label class="lbl">競合 / 参考LP</label><textarea id="f-lprefs" placeholder="競合URL・参考にしたいLPなど"></textarea></div>
+    </div></div></div></div>
+  </div>
+</div>
+
+<div id="s-meishi" class="tab-section" style="display:none">
+  <div class="card" id="c-meishi">
+    <div class="ch" onclick="tog('c-meishi')"><span class="ch-num">05</span><span class="ch-title">名刺 詳細</span><span class="ch-arr">▾</span></div>
+    <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg2">
+      <div class="field"><label class="lbl">記載する名前</label><input type="text" id="f-mname" placeholder="山田 太郎 / Taro Yamada"></div>
+      <div class="field"><label class="lbl">肩書き / 役職</label><input type="text" id="f-mtitle" placeholder="代表 / デザイナー"></div>
+      <div class="field"><label class="lbl">電話番号</label><input type="text" id="f-mtel" placeholder="090-XXXX-XXXX"></div>
+      <div class="field"><label class="lbl">メールアドレス</label><input type="text" id="f-mmail" placeholder="hello@example.com"></div>
+      <div class="field"><label class="lbl">WebサイトURL</label><input type="text" id="f-murl" placeholder="https://example.com"></div>
+      <div class="field"><label class="lbl">SNSアカウント</label><input type="text" id="f-msns" placeholder="@username"></div>
+      <div class="field full"><label class="lbl">住所（記載する場合）</label><input type="text" id="f-maddr" placeholder="東京都〇〇区..."></div>
+      <div class="field full"><label class="lbl">QRコード</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">必要（URL記載）</span><span class="opt" onclick="tog2(this)">不要</span></div>
+      </div>
+      <div class="field full"><label class="lbl">サイズ</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">標準（91×55mm）</span><span class="opt" onclick="tog2(this)">欧米（89×51mm）</span><span class="opt" onclick="tog2(this)">スリム</span><span class="opt" onclick="tog2(this)">その他</span></div>
+      </div>
+      <div class="field"><label class="lbl">片面 / 両面</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">片面</span><span class="opt" onclick="tog2(this)">両面</span></div>
+      </div>
+      <div class="field"><label class="lbl">印刷枚数</label><input type="text" id="f-mcount" placeholder="100枚 / 未定"></div>
+      <div class="field full"><label class="lbl">印刷業者</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">ご自身で発注</span><span class="opt" onclick="tog2(this)">デザイナー経由</span><span class="opt" onclick="tog2(this)">未定</span></div>
+      </div>
+      <div class="field full"><label class="lbl">特殊加工・その他希望</label><textarea id="f-mopt" placeholder="箔押し / 角丸 / 特殊紙 etc."></textarea></div>
+    </div></div></div></div>
+  </div>
+</div>
+
+<div id="s-site" class="tab-section" style="display:none">
+  <div class="card" id="c-site">
+    <div class="ch" onclick="tog('c-site')"><span class="ch-num">05</span><span class="ch-title">Webサイト 詳細</span><span class="ch-arr">▾</span></div>
+    <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+      <div class="field"><label class="lbl">サイトの目的（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">集客</span><span class="opt" onclick="tog2(this)">採用</span><span class="opt" onclick="tog2(this)">ブランディング</span><span class="opt" onclick="tog2(this)">EC・販売</span><span class="opt" onclick="tog2(this)">予約</span><span class="opt" onclick="tog2(this)">コーポレート</span></div>
+      </div>
+      <div class="field"><label class="lbl">必要なページ（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">TOP</span><span class="opt" onclick="tog2(this)">About</span><span class="opt" onclick="tog2(this)">サービス</span><span class="opt" onclick="tog2(this)">料金</span><span class="opt" onclick="tog2(this)">ブログ</span><span class="opt" onclick="tog2(this)">お客様の声</span><span class="opt" onclick="tog2(this)">アクセス</span><span class="opt" onclick="tog2(this)">お問い合わせ</span><span class="opt" onclick="tog2(this)">採用</span></div>
+      </div>
+      <div class="field"><label class="lbl">ページ数</label><input type="text" id="f-stpages" placeholder="5ページ / 未定"></div>
+      <div class="field"><label class="lbl">制作方法</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">HTML/CSS</span><span class="opt" onclick="tog2(this)">WordPress</span><span class="opt" onclick="tog2(this)">Studio</span><span class="opt" onclick="tog2(this)">Squarespace</span><span class="opt" onclick="tog2(this)">要相談</span></div>
+      </div>
+      <div class="field"><label class="lbl">ドメイン / サーバー</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">既存あり</span><span class="opt" onclick="tog2(this)">新規取得（クライアント）</span><span class="opt" onclick="tog2(this)">新規取得（代行）</span><span class="opt" onclick="tog2(this)">未定</span></div>
+      </div>
+      <div class="field"><label class="lbl">スマホ対応</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">必須</span><span class="opt" onclick="tog2(this)">PCのみでOK</span><span class="opt" onclick="tog2(this)">どちらでもOK</span></div>
+      </div>
+      <div class="field"><label class="lbl">納品後の更新・管理</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">自分でやりたい（CMS希望）</span><span class="opt" onclick="tog2(this)">更新依頼したい</span><span class="opt" onclick="tog2(this)">更新なし</span></div>
+      </div>
+      <div class="field"><label class="lbl">競合・参考サイト</label><textarea id="f-stref" placeholder="好きなサイトURL・参考にしたい企業名など"></textarea></div>
+      <div class="field"><label class="lbl">アナリティクス / SEO 要件</label><textarea id="f-stseo" placeholder="Googleアナリティクス設置希望 / 特定キーワード etc."></textarea></div>
+    </div></div></div></div>
+  </div>
+</div>
+
+<div id="s-chirashi" class="tab-section" style="display:none">
+  <div class="card" id="c-chirashi">
+    <div class="ch" onclick="tog('c-chirashi')"><span class="ch-num">05</span><span class="ch-title">チラシ 詳細</span><span class="ch-arr">▾</span></div>
+    <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+      <div class="field"><label class="lbl">サイズ</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">A4</span><span class="opt" onclick="tog2(this)">A5</span><span class="opt" onclick="tog2(this)">A6</span><span class="opt" onclick="tog2(this)">B4</span><span class="opt" onclick="tog2(this)">B5</span><span class="opt" onclick="tog2(this)">その他</span></div>
+      </div>
+      <div class="field"><label class="lbl">片面 / 両面</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">片面</span><span class="opt" onclick="tog2(this)">両面</span></div>
+      </div>
+      <div class="field"><label class="lbl">向き</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">縦</span><span class="opt" onclick="tog2(this)">横</span><span class="opt" onclick="tog2(this)">どちらでもOK</span></div>
+      </div>
+      <div class="field"><label class="lbl">配布方法（複数可）</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">店頭設置</span><span class="opt" onclick="tog2(this)">ポスティング</span><span class="opt" onclick="tog2(this)">手渡し</span><span class="opt" onclick="tog2(this)">イベント配布</span><span class="opt" onclick="tog2(this)">WEB掲載（PDF）</span></div>
+      </div>
+      <div class="field"><label class="lbl">印刷部数</label><input type="text" id="f-chcount" placeholder="500部 / 1000部 / 未定"></div>
+      <div class="field"><label class="lbl">印刷業者</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">ご自身で発注</span><span class="opt" onclick="tog2(this)">デザイナー経由</span><span class="opt" onclick="tog2(this)">未定</span></div>
+      </div>
+      <div class="field"><label class="lbl">折り加工</label>
+        <div class="opts"><span class="opt" onclick="tog2(this)">なし</span><span class="opt" onclick="tog2(this)">二つ折り</span><span class="opt" onclick="tog2(this)">三つ折り</span></div>
+      </div>
+      <div class="field"><label class="lbl">掲載必須情報</label><textarea id="f-chinfo" placeholder="イベント名・日付・場所・価格・連絡先・QRコードなど確定情報をすべて"></textarea></div>
+      <div class="field"><label class="lbl">訴求ポイント / キャッチコピー</label><textarea id="f-chappeal" placeholder="何をいちばん伝えたい？ターゲットにどう感じてほしい？"></textarea></div>
+    </div></div></div></div>
+  </div>
+</div>
+
+<!-- 06 メモ -->
+<div class="card" id="c-memo">
+  <div class="ch" onclick="tog('c-memo')"><span class="ch-num">06</span><span class="ch-title">その他・備考・懸念点</span><span class="ch-arr">▾</span></div>
+  <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+    <div class="field"><label class="lbl">クライアントからの要望・こだわり</label><textarea id="f-request" placeholder="細かい要望・絶対に外せない条件など"></textarea></div>
+    <div class="field"><label class="lbl">懸念点・確認事項（デザイナー側メモ）</label><textarea id="f-concern" placeholder="確認が必要な点・要注意事項など"></textarea></div>
+    <div class="field"><label class="lbl">次のアクション</label><input type="text" id="f-next" placeholder="〇〇日までに素材送付 / 見積書送付 etc."></div>
+  </div></div></div></div>
+</div>
+
+<!-- 07 画像添付 -->
+<div class="card" id="c-img">
+  <div class="ch" onclick="tog('c-img')"><span class="ch-num">07</span><span class="ch-title">参考画像の添付（最大10枚）</span><span class="ch-arr">▾</span></div>
+  <div class="cb-wrap"><div class="cb-inner"><div class="cb"><div class="fg">
+    <div class="img-zone" id="imgZone">
+      <input type="file" id="imgInput" accept="image/*" multiple onchange="addImages(this)">
+      <div class="img-zone-txt">
+        <strong>タップして画像を選択</strong>
+        参考画像・NG例・ムードボードなど（最大10枚）
+      </div>
+    </div>
+    <div class="img-preview" id="imgPreview"></div>
+    <div class="img-count" id="imgCount"></div>
+  </div></div></div></div>
+</div>
+
+<div class="actions">
+  <button class="btn btn-outline" onclick="clearAll()">リセット</button>
+  <button class="btn btn-dark" onclick="exportCSV()">CSV出力</button>
+  <button class="btn btn-orange" id="sendBtn" onclick="openModal()">メールで送付</button>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- MODAL -->
+<div class="modal-bg" id="sendModal" onclick="bgClick(event)">
+  <div class="modal">
+    <h3>メールで送付</h3>
+    <p>送付先のメールアドレスを入力してください。<br>ヒアリング内容と参考画像が自動で送信されます。</p>
+    <div class="field" style="margin-bottom:14px;">
+      <label class="lbl">送付先メールアドレス <span class="req">*</span></label>
+      <input type="text" id="sendTo" placeholder="client@example.com">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal()">キャンセル</button>
+      <button class="btn btn-orange" onclick="sendMail()">送信する</button>
+    </div>
+  </div>
+</div>
+
+<!-- SENDING OVERLAY -->
+<div class="sending-overlay" id="sendingOverlay">
+  <div class="sending-box">
+    <div class="spinner"></div>
+    <p>送信中...</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// ▼▼▼ EmailJS の設定（IDが揃ったらここを差し替え）▼▼▼
+// ============================================================
+const EMAILJS_PUBLIC_KEY  = 'j5pEYUXT8ZsXp-LEt';
+const EMAILJS_SERVICE_ID  = 'service_hito_miru';
+const EMAILJS_TEMPLATE_ID = 'template_2zorcht';
+// ============================================================
+
+(function(){
+  if(EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY'){
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    document.getElementById('configNotice').style.display = 'none';
+  }
+})();
+
+// ===== TABS =====
+const TABS = ['banner','lp','meishi','site','chirashi'];
+let currentTab = 'banner';
+
+const THEME_B_TABS = ['lp','site'];
+
+function switchTab(name, btn){
+  TABS.forEach(t => {
+    const el = document.getElementById('s-'+t);
+    if(t === name){
+      el.style.display = 'block';
+      el.classList.remove('tab-section');
+      void el.offsetWidth;
+      el.classList.add('tab-section');
+    } else {
+      el.style.display = 'none';
+    }
+  });
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentTab = name;
+
+  // テーマ切り替え（LP・サイト → テーマB オレンジベース、それ以外 → テーマA 黒ベース）
+  const isB = THEME_B_TABS.includes(name);
+  document.body.classList.toggle('theme-b', isB);
+  document.body.classList.toggle('theme-a', !isB);
+}
+
+// ===== ACCORDION =====
+function tog(id){
+  const card = document.getElementById(id);
+  card.classList.toggle('collapsed');
+}
+
+// ===== OPTIONS =====
+function tog2(el){ el.classList.toggle('on'); }
+
+// ===== IMAGES =====
+let images = [];
+function addImages(input){
+  Array.from(input.files).forEach(f => {
+    if(images.length >= 10){ showToast('画像は最大10枚までです'); return; }
+    const reader = new FileReader();
+    reader.onload = e => {
+      images.push({ name: f.name, base64: e.target.result });
+      renderThumbs();
+    };
+    reader.readAsDataURL(f);
+  });
+  input.value = '';
+}
+function delImg(i){ images.splice(i,1); renderThumbs(); }
+function renderThumbs(){
+  document.getElementById('imgPreview').innerHTML = images.map((img,i) =>
+    `<div class="img-thumb"><img src="${img.base64}" alt="${img.name}"><button class="img-del" onclick="delImg(${i})">x</button></div>`
+  ).join('');
+  document.getElementById('imgCount').textContent = images.length ? `${images.length} / 10枚` : '';
+  document.getElementById('imgZone').style.display = images.length >= 10 ? 'none' : 'block';
+}
+
+// ===== COLLECT =====
+function getOpts(container){ return Array.from(container.querySelectorAll('.opt.on')).map(e=>e.textContent.trim()).join('、'); }
+function v(id){ const el=document.getElementById(id); return el?el.value.trim():''; }
+
+function collectAll(){
+  const tabLabel = {banner:'バナー',lp:'LP',meishi:'名刺',site:'サイト',chirashi:'チラシ'}[currentTab];
+  const lines = [];
+  const add = (label, val) => { if(val) lines.push(`【${label}】\n${val}`); };
+  function cardOpts(cardId, labels){
+    document.querySelectorAll(`#${cardId} .opts`).forEach((g,i)=>{ const s=getOpts(g); if(s) add(labels[i]||'その他',s); });
+  }
+  add('制作種別',tabLabel);
+  add('クライアント名',v('f-client')); add('担当者名',v('f-person')); add('連絡先',v('f-contact'));
+  add('ヒアリング日',v('f-date')); add('納期',v('f-deadline')); add('修正回数',v('f-revision'));
+  add('予算感',v('f-budget')); add('支払い方法',v('f-payment'));
+  cardOpts('c-basic',['契約書・見積書']);
+  add('ブランド名',v('f-brand')); add('業種',v('f-industry')); add('ターゲット層',v('f-target'));
+  add('雰囲気・世界観',v('f-mood')); add('ブランドカラー',v('f-color')); add('参考URL',v('f-ref'));
+  cardOpts('c-design',['イメージキーワード']);
+  add('参考デザイン',v('f-refdesign')); add('NGテイスト',v('f-ng'));
+  cardOpts('c-assets',['ロゴ支給','写真・画像素材','テキスト・コピー']);
+  add('その他素材',v('f-othermaterial'));
+  if(currentTab==='banner'){ cardOpts('c-banner',['使用媒体','納品形式','アニメーション']); add('サイズ・枚数',v('f-bsize')); add('訴求ポイント',v('f-bappeal')); add('掲載テキスト',v('f-btext')); }
+  if(currentTab==='lp'){ cardOpts('c-lp',['LPの目的','流入元','必要なセクション','制作方法','フォーム設置']); add('訴求ポイント',v('f-lpappeal')); add('競合・参考LP',v('f-lprefs')); }
+  if(currentTab==='meishi'){ add('記載する名前',v('f-mname')); add('肩書き',v('f-mtitle')); add('電話番号',v('f-mtel')); add('メール',v('f-mmail')); add('URL',v('f-murl')); add('SNS',v('f-msns')); add('住所',v('f-maddr')); add('印刷枚数',v('f-mcount')); add('特殊加工',v('f-mopt')); cardOpts('c-meishi',['QRコード','サイズ','片面・両面','印刷業者']); }
+  if(currentTab==='site'){ cardOpts('c-site',['サイトの目的','必要なページ','制作方法','ドメイン・サーバー','スマホ対応','納品後の管理']); add('ページ数',v('f-stpages')); add('競合・参考サイト',v('f-stref')); add('アナリティクス・SEO',v('f-stseo')); }
+  if(currentTab==='chirashi'){ cardOpts('c-chirashi',['サイズ','片面・両面','向き','配布方法','印刷業者','折り加工']); add('印刷部数',v('f-chcount')); add('掲載必須情報',v('f-chinfo')); add('訴求ポイント',v('f-chappeal')); }
+  add('クライアントからの要望',v('f-request')); add('懸念点・確認事項',v('f-concern')); add('次のアクション',v('f-next'));
+  if(images.length) add('添付画像',images.map(i=>i.name).join('、')+'\n※画像はメール送信と同時に添付されます');
+  return lines.join('\n\n');
+}
+
+// ===== MODAL =====
+function openModal(){
+  if(EMAILJS_PUBLIC_KEY==='YOUR_PUBLIC_KEY'){ showToast('EmailJS の設定が必要です','error'); return; }
+  document.getElementById('sendModal').classList.add('open');
+}
+function closeModal(){ document.getElementById('sendModal').classList.remove('open'); }
+function bgClick(e){ if(e.target.classList.contains('modal-bg')) closeModal(); }
+
+// ===== SEND =====
+async function sendMail(){
+  const to = document.getElementById('sendTo').value.trim();
+  if(!to){ showToast('送付先メールアドレスを入力してください','error'); return; }
+  const client  = v('f-client') || 'クライアント名未入力';
+  const tabLabel = {banner:'バナー',lp:'LP',meishi:'名刺',site:'サイト',chirashi:'チラシ'}[currentTab];
+  const subject = `【ヒアリングシート】${client}｜${tabLabel}`;
+  const body    = collectAll();
+  const params  = { to_email:to, subject, body };
+  images.forEach((img,i) => { params[`image_${i+1}`] = img.base64; });
+  closeModal();
+  document.getElementById('sendingOverlay').classList.add('show');
+  document.getElementById('sendBtn').disabled = true;
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    showToast('送信が完了しました','success');
+  } catch(err){
+    console.error(err);
+    showToast('送信に失敗しました。設定を確認してください','error');
+  } finally {
+    document.getElementById('sendingOverlay').classList.remove('show');
+    document.getElementById('sendBtn').disabled = false;
+  }
+}
+
+// ===== CSV =====
+function exportCSV(){
+  const body = collectAll();
+  const rows = [['項目','内容']];
+  body.split('\n\n').forEach(block=>{
+    const m=block.match(/^【(.+?)】\n([\s\S]*)$/);
+    if(m) rows.push([m[1],m[2].replace(/\n/g,' ')]);
+  });
+  const csv = rows.map(r=>r.map(c=>`"${c.replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `hearing_${v('f-client')||'client'}_${currentTab}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  showToast('CSVをダウンロードしました','success');
+}
+
+// ===== CLEAR =====
+function clearAll(){
+  if(!confirm('入力内容をすべてリセットしますか？')) return;
+  document.querySelectorAll('input[type=text],input[type=date],textarea,select').forEach(el=>el.value='');
+  document.querySelectorAll('.opt.on').forEach(el=>el.classList.remove('on'));
+  images=[]; renderThumbs();
+  showToast('リセットしました');
+}
+
+// ===== TOAST =====
+function showToast(msg, type=''){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (type?' '+type:'');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3200);
+}
+</script>
+</body>
+</html>
